@@ -26,7 +26,11 @@ But it doesn't stop there—the chatbot goes further by providing the relevant f
 * **Form Guidance:** The chatbot will provide step-by-step instructions on how to fill out the form.
 * **Information Retrieval:** The chatbot can access relevant information from external sources to assist users.
 * **Error Handling:** The chatbot can identify and correct common errors in form completion.
-
+- - - 
+![Alter](pics/3.png)
+![Alter](pics/4.png)
+![Alter](pics/5.png) 
+- - - 
 **Technology Stack**
 
 **Backend**:
