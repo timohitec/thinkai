@@ -5,12 +5,13 @@
 "use client";
 
 // import useState so that we can update the response we get from the API
-import { useState } from "react";
+import { useState, useEffect } from "react";
 // import axios so we can easily send the user's input to our server
 import axios from "axios";
 import { AIIcon, UserIcon } from "@/components/Icons";
 import { PointsLoader } from "@/components/Loader";
 import { TextInput } from "@/components/Input";
+import { Section } from "@/components/FormElements";
 import "./globals.css";
 
 interface Message {
@@ -23,9 +24,7 @@ const Message = ({ type, text, loading }: Message) => {
   const Icon = type === "ai" ? AIIcon : UserIcon;
   return (
     <div className="flex gap-3 my-4 text-gray-600 text-sm flex-1 bg-white p-4 rounded">
-      <span className="relative flex shrink-0 overflow-hidden rounded-full w-8 h-8">
-        <div className="rounded-full bg-gray-100 border p-1">{Icon}</div>
-      </span>
+      {Icon}
       <p className="leading-relaxed">
         <span className="block font-bold text-gray-700">
           {type === "ai" ? "AI" : "User"}{" "}
@@ -43,8 +42,34 @@ const App = () => {
   ]);
 
   const [value, setValue] = useState<string>("");
+  const [showHighlights, setShowHighlights] = useState<boolean>(false);
+  const [form, setForm] = useState<any>(null);
+  const setFormValue = (id, value, highlight) => {
+    setForm((form) =>
+      form.map((section) => ({
+        ...section,
+        content: section.content.map((row) =>
+          row.map((el) => (el.id === id ? { ...el, value, highlight } : el))
+        ),
+      }))
+    );
+  };
 
-  const [loading, setLoading] = useState<boolean>(false);
+  const resetFormHighlights = () => {
+    setForm((form) =>
+      form.map((section) => ({
+        ...section,
+        content: section.content.map((row) =>
+          row.map((el) => ({ ...el, highlight: false }))
+        ),
+      }))
+    );
+    setShowHighlights(false);
+  };
+
+  useEffect(() => {
+    if (showHighlights) setTimeout(() => resetFormHighlights(), 1000);
+  }, [showHighlights]);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setValue(e.target.value);
@@ -56,7 +81,8 @@ const App = () => {
       ...messages,
       { type: "ai", text: "", loading: true },
     ]);
-    const response = await axios.post("/chat", { message: value });
+    const url = form ? "/chat" : "/selector";
+    const response = await axios.post(url, { message: value });
     setMessages((messages) =>
       messages.map((e, i) =>
         i === messages.length - 1
@@ -64,11 +90,21 @@ const App = () => {
           : e
       )
     );
+
+    if (response.data.form) {
+      setForm(response.data.form);
+    }
+    if (response.data.updates) {
+      Object.entries(response.data.updates).forEach(([id, value]) => {
+        setFormValue(id, value, true);
+      });
+      setShowHighlights(true);
+    }
   };
 
   return (
     <div className="flex h-full">
-      <div className="flex flex-col flex-1 bg-slate-300 p-6">
+      <div className="flex flex-col flex-1 bg-slate-300 p-6 overflow-y-auto">
         {/* <!-- Chat Container --> */}
         <div
           className="pr-4 flex-1"
@@ -82,7 +118,7 @@ const App = () => {
         <div className="flex items-center pt-0">
           <div className="flex items-center justify-center w-full space-x-2">
             <TextInput
-              placeholder="Type your message"
+              placeholder="Gib deine Nachricht ein"
               value={value}
               onChange={onChange}
             />
@@ -95,7 +131,17 @@ const App = () => {
           </div>
         </div>
       </div>
-      <div className="flex-1">Ausgabe</div>
+      {!!form && (
+        <div className="flex-1 p-6 overflow-y-auto">
+          {form.map((section, index) => (
+            <Section
+              data={section}
+              key={`section_${index}`}
+              setFormValue={setFormValue}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
