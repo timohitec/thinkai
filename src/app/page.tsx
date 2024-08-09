@@ -156,6 +156,11 @@ const App = () => {
               placeholder="Gib deine Nachricht ein"
               value={value}
               onChange={onChange}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleSubmit(value);
+                }
+              }}
             />
             <button
               onClick={() => handleSubmit(value)}
