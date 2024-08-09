@@ -15,22 +15,6 @@ interface FormElementData {
 const Element = (props: { data: FormElementData }) => {
   const { label, type, width, id, value, highlight } = props.data;
 
-  //   const [highlightItem, setHighlightItem] = useState<boolean>(false);
-
-  //   useEffect(() => {
-  //     if (!highlightItem && new Date().valueOf() < highlightTime) {
-  //       console.log(123);
-  //       setHighlightItem(true);
-  //       const interval = setInterval(() => {
-  //         console.log("HL", highlightItem);
-  //         if (highlightItem && new Date().valueOf() > highlightTime) {
-  //           setHighlightItem(false);
-  //         }
-  //       }, 500);
-  //       return () => clearInterval(interval);
-  //     }
-  //   }, [highlightTime, highlightItem]);
-
   const { setFormValue } = props;
   const style = { flex: width, display: "flex", alignItems: "end" };
 

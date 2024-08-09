@@ -25,14 +25,14 @@
       [
         {
           "label": "Geburtsdatum",
-          "type": "iDate",
-          "width": 25,
+          "type": "iText",
+          "width": 50,
           "id": "a4"
         },
         {
           "label": "Staatsangehörigkeit",
           "type": "iText",
-          "width": 25,
+          "width": 50,
           "id": "a5"
         }
       ],
